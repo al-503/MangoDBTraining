@@ -1,8 +1,7 @@
 // variable d'enviromnement
 const express = require('express');
 const mongoose = require('mongoose');
-// variable de models
-const Thing = require("./models/Thing");
+const stuffRoutes = require("./routes/stuff")
 //vide pour l'instant
 const app = express();
 
@@ -20,40 +19,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// CRUD //
+// routes //
 
-app.post('/api/stuff', (req, res) => {
-    delete req.body._id;
-    const thing = new Thing({
-        ...req.body
-    });
-    thing.save()
-        .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
-        .catch(error => res.status(400).json({ error }));
-});
+app.use('/api/stuff', stuffRoutes);
 
-app.put('/api/stuff/:id', (req, res) => {
-    Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
-        .catch(error => res.status(400).json({ error }));
-});
-
-app.delete('/api/stuff/:id', (req, res) => {
-    Thing.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
-        .catch(error => res.status(400).json({ error }));
-});
-
-app.get('/api/stuff/:id', (req, res) => {
-    Thing.findOne({ _id: req.params.id })
-        .then(thing => res.status(200).json({ thing }))
-        .catch(error => res.status(404).json({ error }));
-});
-
-app.get('/api/stuff', (req, res) => {
-    Thing.find()
-        .then(things => res.status(200).json({ things }))
-        .catch(error => res.status(400).json({ error }));
-});
-
+// exports //
 module.exports = app;
