@@ -6,6 +6,7 @@ const Thing = require("./models/Thing");
 //vide pour l'instant
 const app = express();
 
+//ça ne devrai pas rester en prod ici
 mongoose.connect('mongodb+srv://axelridray:5n5wHlu1HbKQuWcm@clustertestcourmango.dgso4.mongodb.net/?retryWrites=true&w=majority&appName=ClusterTestCourMango')
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
@@ -18,27 +19,40 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
+
 // CRUD //
 
-app.post('/api/stuff', (req, res, next) => {
+app.post('/api/stuff', (req, res) => {
     delete req.body._id;
     const thing = new Thing({
         ...req.body
     });
     thing.save()
-    .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-    .catch(error => res.status(400).json({ error }));
+        .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
+        .catch(error => res.status(400).json({ error }));
 });
 
-app.get('/api/stuff/:id', (req, res, next) => {
+app.put('/api/stuff/:id', (req, res) => {
+    Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
+        .catch(error => res.status(400).json({ error }));
+});
+
+app.delete('/api/stuff/:id', (req, res) => {
+    Thing.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
+        .catch(error => res.status(400).json({ error }));
+});
+
+app.get('/api/stuff/:id', (req, res) => {
     Thing.findOne({ _id: req.params.id })
-        .then(thing => res.status(200).json(thing))
+        .then(thing => res.status(200).json({ thing }))
         .catch(error => res.status(404).json({ error }));
 });
 
-app.get('/api/stuff', (req, res, next) => {
+app.get('/api/stuff', (req, res) => {
     Thing.find()
-        .then(things => res.status(200).json(things))
+        .then(things => res.status(200).json({ things }))
         .catch(error => res.status(400).json({ error }));
 });
 
