@@ -1,15 +1,16 @@
 // variable d'enviromnement
 const express = require('express');
-const mongoose = require('mongoose');
 const stuffRoutes = require("./routes/stuff")
-//vide pour l'instant
+const mongoose = require('mongoose');
+const environement = require('./environement')
+
 const app = express();
 
-//ça ne devrai pas rester en prod ici
-mongoose.connect('mongodb+srv://axelridray:5n5wHlu1HbKQuWcm@clustertestcourmango.dgso4.mongodb.net/?retryWrites=true&w=majority&appName=ClusterTestCourMango')
+mongoose.connect(environement.DATABASE_TOKEN)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+//ça ne devrai pas rester en prod ici
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -20,7 +21,6 @@ app.use((req, res, next) => {
 });
 
 // routes //
-
 app.use('/api/stuff', stuffRoutes);
 
 // exports //
