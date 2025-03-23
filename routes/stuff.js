@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const stuffController = require("../controllers/stuff.js")
 
 router.post('/', stuffController.createThing);

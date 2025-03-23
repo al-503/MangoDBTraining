@@ -1,8 +1,10 @@
 // variable d'enviromnement
 const express = require('express');
-const stuffRoutes = require("./routes/stuff")
 const mongoose = require('mongoose');
-const environement = require('./environement')
+const environement = require('./environement');
+// routes //
+const stuffRoutes = require('./routes/stuff');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -20,8 +22,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// routes //
+// routes // le path est celui que j'indique sur mon site c'est moi qui le définit
 app.use('/api/stuff', stuffRoutes);
+app.use('/api/auth', userRoutes);
 
 // exports //
 module.exports = app;
